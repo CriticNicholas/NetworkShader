@@ -26,7 +26,6 @@ public:
             });
 
 
-
         Start([this, ActiveShader, &FragmentString, &VertexString]() {
             this->DrawArrays(ActiveShader, &VertexString, &FragmentString);
             });

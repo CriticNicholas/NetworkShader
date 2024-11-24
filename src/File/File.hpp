@@ -19,6 +19,8 @@ class File{
                 std::string OutputString(FileSize, '\0');
                 InputFileInterface.read(OutputString.data(), FileSize);
 
+                LastWriteTime = std::filesystem::last_write_time(FilePath);
+
                 return OutputString;
             }
 
@@ -28,7 +30,23 @@ class File{
                 return "\0";
             }
         }
+
+        int FileChange()
+        {
+            if (LastWriteTime == std::filesystem::last_write_time(FilePath))
+            {
+                LastWriteTime = std::filesystem::last_write_time(FilePath);
+
+                return 1;
+            }
+            return 0;
+
+        }
+
     private:
         std::filesystem::path FilePath;
+
         std::ifstream InputFileInterface{FilePath, std::ios::binary};
+
+        std::filesystem::file_time_type LastWriteTime;
 };
