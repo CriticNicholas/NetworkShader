@@ -8,8 +8,8 @@
 class Socket
 {
 public:
-    Socket(const std::string_view IpV4, int Port)
-        : EndPoint(asio::ip::address_v4::from_string(IpV4.data()), Port),
+    Socket(const std::string_view Ip, int Port)
+        : EndPoint(asio::ip::make_address(Ip.data()), Port),
         Acceptor(IO_Context, EndPoint),
         AsioSocket(IO_Context) {}
 

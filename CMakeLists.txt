@@ -16,7 +16,7 @@ find_package(OpenGL REQUIRED)
 
 find_package(OpenSSL REQUIRED)
 
-include_directories(include ${OPENSSL_INCLUDE_DIR})
+include_directories(include/ include/asio/asio/include ${OPENSSL_INCLUDE_DIR})
 
 add_library(glad include/glad/glad.h include/glad.c)
 
