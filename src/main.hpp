@@ -25,7 +25,10 @@ public:
             }).detach();
             });
 
-
+        KeyCallback('C', [this, &FragmentFile]() {std::thread([this, &FragmentFile] {
+            this->Sender(&FragmentFile);
+            }).detach();
+            });
 
         Start([this, ActiveShader, &FragmentString, &VertexString]() {
             this->DrawArrays(ActiveShader, &VertexString, &FragmentString);
