@@ -33,7 +33,7 @@ class File{
 
         int FileChange()
         {
-            if (LastWriteTime == std::filesystem::last_write_time(FilePath))
+            if (LastWriteTime != std::filesystem::last_write_time(FilePath))
             {
                 LastWriteTime = std::filesystem::last_write_time(FilePath);
 

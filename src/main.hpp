@@ -26,6 +26,7 @@ public:
             });
 
 
+
         Start([this, ActiveShader, &FragmentString, &VertexString]() {
             this->DrawArrays(ActiveShader, &VertexString, &FragmentString);
             });
@@ -86,6 +87,23 @@ private:
                ReceivedStatus = 1;
 
            }
+    }
+
+    void Sender(File* FragmentFile)
+    {
+        Connect();
+
+        Run();
+
+        Send(FragmentFile->ReadFile());
+
+        while (true)
+        {
+            if (FragmentFile->FileChange())
+            {
+                Send(FragmentFile->ReadFile());
+            }
+        }
     }
 
     unsigned Width;
