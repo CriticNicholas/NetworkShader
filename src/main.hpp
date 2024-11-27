@@ -85,6 +85,9 @@ private:
            while (true)
            {
                *FragmentString = Read();
+               std::cout << *FragmentString;
+
+               std::cout << "TEst";
                //VertexString = Read();
 
                ReceivedStatus = 1;
@@ -96,16 +99,18 @@ private:
     {
         Connect();
 
-        Run();
-
-        Send(FragmentFile->ReadFile());
+        //Run();
+        Send(FragmentFile->ReadFile() + '\0');
 
         while (true)
         {
             if (FragmentFile->FileChange())
             {
                 Send(FragmentFile->ReadFile());
+                std::cout << FragmentFile->ReadFile();
             }
+
+            Sleep(100);
         }
     }
 

@@ -4,13 +4,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include <optional>
 
 class Socket
 {
 public:
     Socket(const std::string_view Ip, int Port)
         : EndPoint(asio::ip::make_address(Ip.data()), Port),
-        Acceptor(IO_Context, EndPoint),
         AsioSocket(IO_Context) {}
 
     void Connect() {
@@ -34,9 +34,11 @@ public:
         {
             return;
         }
+        
+        Acceptor.emplace(IO_Context, EndPoint);
 
-        Acceptor.listen();
-        Acceptor.async_accept(AsioSocket, [this](asio::error_code ec) {
+        Acceptor->listen();
+        Acceptor->async_accept(AsioSocket, [this](asio::error_code ec) {
             if (ec) {
                 std::cerr << "Accept error: " << ec.message() << std::endl;
             }
@@ -50,6 +52,7 @@ public:
 
     void Send(const std::string message)
     {
+
         asio::async_write(AsioSocket, asio::buffer(message), [this](asio::error_code ec, size_t bytes_transferred) {
             if (ec)
             {
@@ -139,6 +142,8 @@ private:
 
     std::queue<std::string> ReceivedMessages;
 
+    std::optional<asio::ip::tcp::acceptor> Acceptor;
+
 protected:
     asio::io_context IO_Context;
 
@@ -146,5 +151,5 @@ protected:
 
     asio::ip::tcp::endpoint EndPoint;
 
-    asio::ip::tcp::acceptor Acceptor;
+
 };

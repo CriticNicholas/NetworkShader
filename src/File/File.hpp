@@ -7,12 +7,13 @@
 class File{
     public:
         File(std::filesystem::path FilePath) : FilePath(FilePath) {};
-        ~File() { InputFileInterface.close(); } 
+        ~File() {  } 
 
         std::string ReadFile()
         {
             try
             {
+                std::ifstream InputFileInterface{FilePath, std::ios::binary};
 
                 auto FileSize = std::filesystem::file_size(FilePath);
 
@@ -45,8 +46,6 @@ class File{
 
     private:
         std::filesystem::path FilePath;
-
-        std::ifstream InputFileInterface{FilePath, std::ios::binary};
 
         std::filesystem::file_time_type LastWriteTime;
 };
