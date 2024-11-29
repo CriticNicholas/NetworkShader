@@ -15,13 +15,13 @@ public:
         File VertexFile("vertex.shader");
         File FragmentFile("fragment.shader");
 
-        std::string VertexString = VertexFile.ReadFile();
-        std::string FragmentString = FragmentFile.ReadFile();
+        VertexString = VertexFile.ReadFile();
+        FragmentString = FragmentFile.ReadFile();
 
         Shader* ActiveShader = new Shader(VertexString, FragmentString);
 
-        KeyCallback('S', [this, &VertexString, &FragmentString]() {std::thread([this, &VertexString, &FragmentString] {
-            this->Reader(&FragmentString, &VertexString);
+        KeyCallback('S', [this]() {std::thread([this] {
+            this->Reader();
             }).detach();
             });
 
@@ -30,8 +30,10 @@ public:
             }).detach();
             });
 
-        Start([this, ActiveShader, &FragmentString, &VertexString]() {
-            this->DrawArrays(ActiveShader, &VertexString, &FragmentString);
+        KeyCallback(GLFW_KEY_ESCAPE, [this]() {AsioSocket.close(); std::cout << "TEST"; });
+
+        Start([this, ActiveShader]() {
+            this->DrawArrays(ActiveShader);
             });
     }
 
@@ -47,14 +49,14 @@ private:
         -1, -1,
     };
 
-    void DrawArrays(Shader* ActiveShader, std::string* VertexString, std::string* FragmentString)
+    void DrawArrays(Shader* ActiveShader)
     {
         UseVertives(Vertices);
         while (!glfwWindowShouldClose(ObjectWindow))
         {
             if(ReceivedStatus)
             {
-                Shader NewShader(*VertexString, *FragmentString);
+                Shader NewShader(VertexString, FragmentString);
 
                 Shader* OldShader = ActiveShader;
 
@@ -77,17 +79,14 @@ private:
         }
     }
 
-    void Reader(std::string *FragmentString, std::string *VertexString)
+    void Reader()
     {
            Host();
 
            Run();
            while (true)
            {
-               *FragmentString = Read();
-               std::cout << *FragmentString;
-
-               std::cout << "TEst";
+               FragmentString = Read();
                //VertexString = Read();
 
                ReceivedStatus = 1;
@@ -107,7 +106,9 @@ private:
             if (FragmentFile->FileChange())
             {
                 Send(FragmentFile->ReadFile());
-                std::cout << FragmentFile->ReadFile();
+
+                FragmentString = FragmentFile->ReadFile();
+                ReceivedStatus = 1;
             }
 
             Sleep(100);
@@ -116,6 +117,9 @@ private:
 
     unsigned Width;
     unsigned Height;
+
+    std::string VertexString;
+    std::string FragmentString;
 
     std::atomic<bool> ReceivedStatus = 1;
 };
